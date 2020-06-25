@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "immer": "^7.0.5"
+    "immer": "^7.0.5",
+    "styled-components": "^5.1.1"
   }
 }
