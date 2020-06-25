@@ -2,15 +2,9 @@ import React, {useState, useCallback, useRef} from 'react';
 import produce from 'immer';
 import './App.css';
 
-// features
-// TODO: edit number of rows/columns
-// TODO: edit time
-// TODO: edit color
-// TODO: add clear button
-// TODO: add randomize button
-
 const numRows = 50;
 const numCols = 50;
+let generationNum = 0;
 
 const operations = [
   [0, 1],
@@ -48,6 +42,8 @@ function App() {
       return;
     }
 
+    generationNum += 1
+
     //-- Rules of the simulation --//
     // 1) Any live cell with fewer than two live neighbours dies, as if by underpopulation.
     // 2) Any live cell with two or three live neighbours lives on to the next generation.
@@ -56,6 +52,7 @@ function App() {
 
     setGrid((g) => {
       return produce(g, gridCopy => { // iterated through current grid `g`
+
         for (let i = 0; i < numRows; i++) {
           for (let k = 0; k < numCols; k++) {
 
@@ -86,11 +83,14 @@ function App() {
       });
     });
 
-    setTimeout(runSimulation, 100)
+    
+
+    setTimeout(runSimulation, 500)
   }, []) 
 
   return (
     <>
+      {/* Buttons */}
       <button 
         onClick={() => {
           setRunning(!running);
@@ -105,6 +105,7 @@ function App() {
 
       <button onClick={() => {
         setGrid(generateEmptyGrid());
+        generationNum = 0
       }}
       >
         Clear
@@ -115,13 +116,18 @@ function App() {
         for (let i = 0; i < numRows; i++) {
           rows.push(Array.from(Array(numCols), () => Math.random() > 0.5 ? 1 : 0))
         }
-
         setGrid(rows)
+        generationNum = 0
+        
       }}
       >
         Random
       </button>
 
+      {/* Generation Counter */}
+      <div>Generation#: {generationNum} </div>
+
+      {/* Interactive Grid */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${numCols}, 20px)`
@@ -137,8 +143,8 @@ function App() {
               setGrid(newGrid)
             }}
               style={{width: 20, height: 20, 
-              backgroundColor: grid[i][k] ? 'deepskyblue' : undefined,
-              border: 'solid 1px black'
+              backgroundColor: grid[i][k] ? 'deepskyblue' : '#8c8787',
+              border: 'solid 1px white'
             }} 
           />)
         )}
@@ -148,4 +154,9 @@ function App() {
   
 }
 
+
+
 export default App;
+
+// background-color: #537895;
+// background-image: linear-gradient(315deg, #537895 0%, #09203f 74%);
