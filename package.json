@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "immer": "^7.0.5"
+  }
+}
