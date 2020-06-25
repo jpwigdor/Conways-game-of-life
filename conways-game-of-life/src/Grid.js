@@ -6,6 +6,8 @@ import './App.css';
 const numRows = 25;
 const numCols = 25;
 let generationNum = 0;
+let cellSize = 25;
+let generationDuration = 500;
 
 const operations = [
   [0, 1],
@@ -27,6 +29,8 @@ const generateEmptyGrid = () => {
   return rows
 }
 
+
+
 function Grid() {
   const [grid, setGrid] = useState(() => {
     return generateEmptyGrid();
@@ -36,7 +40,9 @@ function Grid() {
   const [running, setRunning] = useState(false);
 
   const runningRef = useRef();
-  runningRef.current = running
+  runningRef.current = running;
+
+  
 
   const runSimulation = useCallback(() => {
     if (!runningRef.current) {
@@ -86,12 +92,12 @@ function Grid() {
 
     
 
-    setTimeout(runSimulation, 500)
+    setTimeout(runSimulation, generationDuration)
   }, []) 
 
   return (
     <TGridWrapper>
-      <TButtonRow>
+      <TButtonRowOne>
       {/* Buttons */}
         <div>
           <button 
@@ -132,12 +138,27 @@ function Grid() {
         {/* Generation Counter */}
         <div>Generation#: {generationNum} </div>
 
-      </TButtonRow>
+      </TButtonRowOne>
+      <TButtonRowTwo>
+        {/* cell size */}
+        <label>
+          Cell Size:
+          <input placeholder="25 px"/>
+        </label>
+        {/* seconds per generation */}
+        <label>
+          miliseconds per generation:
+          <input placeholder="500 ms"/>
+        </label>
+        {/* Submit */}
+        <input type="submit" value="Submit" />
+      </TButtonRowTwo>
 
       {/* Interactive Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${numCols}, 20px)`
+        gridTemplateColumns: `repeat(${numCols}, ${cellSize}px)`,
+        margin: '0 auto'
       }}>
         {grid.map((rows, i) => 
           rows.map((col, k) => 
@@ -149,10 +170,12 @@ function Grid() {
               })
               setGrid(newGrid)
             }}
-              style={{width: 20, height: 20, 
-              backgroundColor: grid[i][k] ? 'deepskyblue' : '#8c8787',
-              border: 'solid 1px black'
-            }} 
+              style={{
+                width: `${cellSize}px`, 
+                height: `${cellSize}px`, 
+                backgroundColor: grid[i][k] ? 'deepskyblue' : '#8c8787',
+                border: 'solid 1px black'
+              }} 
           />)
         )}
       </div>
@@ -164,18 +187,18 @@ function Grid() {
 const TGridWrapper = styled.div`
   display: flex;
   flex-direction:column;
-  `;
+`;
 
-const TButtonRow = styled.div`
+const TButtonRowOne = styled.div`
   margin: 10px 0;
   display: flex;
   justify-content: space-around;
 `;
 
-
+const TButtonRowTwo = styled.form`
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+`;
 
 export default Grid;
-
-// background-color: #537895;
-// background-image: linear-gradient(315deg, #537895 0%, #09203f 74%);
- 

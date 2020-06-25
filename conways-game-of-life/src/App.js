@@ -3,10 +3,7 @@ import Grid from './Grid';
 import Instructions from './Instructions';
 import styled from 'styled-components';
 
-
 import './App.css';
-
-
 
 function App() {
   return (
