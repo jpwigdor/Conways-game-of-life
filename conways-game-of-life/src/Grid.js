@@ -1,13 +1,9 @@
-import React, {useState, useCallback, useRef} from 'react';
+import React, {useState, useCallback, useRef, useEffect} from 'react';
 import produce from 'immer';
 import styled from 'styled-components';
 import './App.css';
 
-const numRows = 25;
-const numCols = 25;
 let generationNum = 0;
-let cellSize = 25;
-let generationDuration = 500;
 
 const operations = [
   [0, 1],
@@ -20,37 +16,52 @@ const operations = [
   [-1, -1]
 ]
 
-const generateEmptyGrid = () => {
-  const rows = [];
-  for (let i = 0; i < numRows; i++) {
-    rows.push(Array.from(Array(numCols), () => 0))
+function Grid() {
+  const [numRows, setNumRows] = useState(25)
+  const [numCols, setNumCols] = useState(25)
+  const [cellSize, setCellSize] = useState(25)
+  const [generationalDuration, setGenerationalDuration] = useState(500)
+  const [color, setColor] = useState("deepskyblue")
+  // const [generationNum, setGenerationNum] = useState(0)
+
+
+  // ---------------- features -----------------------------
+  const onCellSizeChange = evt => setCellSize(evt.target.value);
+
+  // TODO: change how fast generations occur via user input
+  // const onGenerationChange = evt => setGenerationalDuration(evt.target.value)
+  
+  // TODO: change total grid size via user input
+  // const onGridSizeChange = evt => {
+  //   setNumRows(evt.target.value)
+  //   setNumCols(evt.target.value)
+  //   // setRunning(false)
+  // }
+  // -------------------------------------------------------
+
+  const generateEmptyGrid = () => {
+    const rows = [];
+    for (let i = 0; i < numRows; i++) {
+      rows.push(Array.from(Array(numCols), () => 0))
+    }
+    return rows
   }
 
-  return rows
-}
-
-
-
-function Grid() {
   const [grid, setGrid] = useState(() => {
     return generateEmptyGrid();
   })
-
-
   const [running, setRunning] = useState(false);
-
   const runningRef = useRef();
   runningRef.current = running;
-
-  
 
   const runSimulation = useCallback(() => {
     if (!runningRef.current) {
       return;
     }
 
+    
     generationNum += 1
-
+    
     //-- Rules of the simulation --//
     // 1) Any live cell with fewer than two live neighbours dies, as if by underpopulation.
     // 2) Any live cell with two or three live neighbours lives on to the next generation.
@@ -90,10 +101,11 @@ function Grid() {
       });
     });
 
-    
 
-    setTimeout(runSimulation, generationDuration)
+
+    setTimeout(runSimulation, generationalDuration)
   }, []) 
+
 
   return (
     <TGridWrapper>
@@ -114,6 +126,7 @@ function Grid() {
 
           <button onClick={() => {
             setGrid(generateEmptyGrid());
+            // setGenerationNum(0)
             generationNum = 0
             setRunning(false)
           }}
@@ -127,6 +140,7 @@ function Grid() {
               rows.push(Array.from(Array(numCols), () => Math.random() > 0.5 ? 1 : 0))
             }
             setGrid(rows)
+            // setGenerationNum(0)
             generationNum = 0
             setRunning(false)
           }}
@@ -143,15 +157,41 @@ function Grid() {
         {/* cell size */}
         <label>
           Cell Size:
-          <input placeholder="25 px"/>
+          <TFormInput 
+            placeholder="25 px" 
+            type="text" 
+            name="cellSize"
+            onChange={onCellSizeChange}
+          />
         </label>
         {/* seconds per generation */}
-        <label>
-          miliseconds per generation:
-          <input placeholder="500 ms"/>
-        </label>
+        {/* <label>
+          ms per generation:
+          <TFormInput 
+            placeholder="500 ms" 
+            type="text" 
+            name="generationalDuration" 
+            onChange={onGenerationChange}  
+          />
+        </label> */}
+        {/* Grid Size */}
+        {/* <label>
+          Grid Size:
+          <input 
+            placeholder="25"
+            type="text"
+            name="gridSize"
+            onChange={onGridSizeChange}
+          />
+        </label> */}
+        <button onClick={() => {
+          setColor("green")
+        }}
+        >
+          green cells
+        </button>
         {/* Submit */}
-        <input type="submit" value="Submit" />
+        {/* <input type="submit" value="Submit" /> */}
       </TButtonRowTwo>
 
       {/* Interactive Grid */}
@@ -170,12 +210,12 @@ function Grid() {
               })
               setGrid(newGrid)
             }}
-              style={{
-                width: `${cellSize}px`, 
-                height: `${cellSize}px`, 
-                backgroundColor: grid[i][k] ? 'deepskyblue' : '#8c8787',
-                border: 'solid 1px black'
-              }} 
+            style={{
+              width: `${cellSize}px`, 
+              height: `${cellSize}px`, 
+              backgroundColor: grid[i][k] ? `${color}` : '#8c8787',
+              border: 'solid 1px black'
+            }} 
           />)
         )}
       </div>
@@ -198,7 +238,12 @@ const TButtonRowOne = styled.div`
 const TButtonRowTwo = styled.form`
   margin: 10px 0;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: space-around;
+`;
+
+const TFormInput = styled.input`
+  width: 50px;
 `;
 
 export default Grid;

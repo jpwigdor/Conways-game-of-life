@@ -10,6 +10,7 @@ function App() {
     <Twrapper>
       <Grid/>
       <Instructions/>
+      {/* add gif examples below */}
     </Twrapper>
   );
 }
